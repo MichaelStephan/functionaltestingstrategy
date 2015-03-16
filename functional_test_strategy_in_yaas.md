@@ -19,6 +19,9 @@ All test types will be illustrated in examples.
 ## Indepencene vs traditional testing
 The independance of teams is one of the YaaS success factors. By applying traditional integration tests requiring dependant services to be operational at any time is a clear violation of this rule as such a services is most probably maintained by a different team, it may be subject to slow, and unreliable networks, and maybe unreliable itself. The goal of this test strategy is to make teams as independent from each other, during the entire software development lifecycle. This can only be achieved by testing as much as possible locally, detached from any network.
 
+## Guarantee business continuity for consumers
+TODO
+
 
 ## The anatonomy of a microservice
 Each microservice is composed out of following components:
@@ -32,6 +35,7 @@ Each microservice is composed out of following components:
 ![anatomy](./images/anatomy.tiff "Anatomy of a microservice")
 
 
+
 ## Unit testing
 ![unittesting](./images/unittesting_restapi.tiff "Unit testing of a microservice - REST API")
 
@@ -42,6 +46,24 @@ Each microservice is composed out of following components:
 
 
 ## Acceptance testing
+
+![acceptancetesting](./images/acceptancetesting.tiff "Acceptance testing of a microservice")
+
+In order to guarantee that new minor versions do not introduce any breaking changes into a service, previous acceptance test suites need to be re-run against the most recent service version. 
+
+![acceptancetestsuites](./images/acceptancetestsuites.tiff "Acceptance test suites")
+
+Example: a team has already implemented two minor version of its service, v1.1 and v1.2. The team is currently working on another version v1.3. When building the most recent version the continous integration environment (CI) automatically re-runs all the existing acceptance test suites (v1.1. and v1.2 )against the newest service implementation 1.3. In case the build breaks the team needs to investigate why the old test suites aren't compatible anymore with the new implementation:
+
+* was it forgotten to introduce a new major version?
+* was it a bug?
+
+
+
+
+
+## Contact testing
+
 
 
 
