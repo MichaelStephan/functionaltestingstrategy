@@ -65,6 +65,10 @@ Example: a team has already implemented two minor version of its service, v1.1 a
 ## Contact testing
 Contract testing is part of the acceptance tests. The goal is to evaluate the json schema compliance to make sure that is honors the define RAML contract.
 
+References:
+- https://www.npmjs.com/package/raml-mocker
+- 
+
 
 
 
