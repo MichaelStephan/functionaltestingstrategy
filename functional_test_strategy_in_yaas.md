@@ -20,7 +20,7 @@ All test types will be illustrated in examples.
 The independance of teams is one of the YaaS success factors. By applying traditional integration tests requiring dependant services to be operational at any time is a clear violation of this rule as such a services is most probably maintained by a different team, it may be subject to slow, and unreliable networks, and maybe unreliable itself. The goal of this test strategy is to make teams as independent from each other, during the entire software development lifecycle. This can only be achieved by testing as much as possible locally, detached from any network.
 
 ## Guarantee business continuity for consumers
-TODO
+A new service release should avoid introducing changes which will break fuctionalities of consumers. In case this would need to happen a new major release should be introduced and so all releated communications.
 
 
 ## The anatonomy of a microservice
@@ -53,7 +53,7 @@ In order to guarantee that new minor versions do not introduce any breaking chan
 
 ![acceptancetestsuites](./images/acceptancetestsuites.tiff "Acceptance test suites")
 
-Example: a team has already implemented two minor version of its service, v1.1 and v1.2. The team is currently working on another version v1.3. When building the most recent version the continous integration environment (CI) automatically re-runs all the existing acceptance test suites (v1.1. and v1.2 )against the newest service implementation 1.3. In case the build breaks the team needs to investigate why the old test suites aren't compatible anymore with the new implementation:
+Example: a team has already implemented two minor version of its service, v1.1 and v1.2. The team is currently working on another version v1.3. When building the most recent version the continous integration environment (CI) automatically re-runs all the existing acceptance test suites (v1.1. and v1.2) against the newest service implementation 1.3. In case the build breaks the team needs to investigate why the old test suites aren't compatible anymore with the new implementation:
 
 * was it forgotten to introduce a new major version?
 * was it a bug?
@@ -63,6 +63,7 @@ Example: a team has already implemented two minor version of its service, v1.1 a
 
 
 ## Contact testing
+Contract testing is part of the acceptance tests. The goal is to evaluate the json schema compliance to make sure that is honors the define RAML contract.
 
 
 
