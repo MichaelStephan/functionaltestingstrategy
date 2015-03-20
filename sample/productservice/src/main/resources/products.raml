@@ -1,0 +1,34 @@
+#%RAML 0.8
+title: Product Service
+baseUri: http://localhost/productservice
+
+schemas:
+  - product: !include product_v1.json
+  - productWithOptionalId: !include productWithOptionalId_v1.json
+
+/products:
+  displayName: Products
+  post:
+    description: "add single item"
+    body:
+      application/json: |
+        schema: productWithOptionalId
+    responses:
+      200:
+        body:
+          application/json:
+            schema: product
+      500:
+        
+  /{id}:
+  get:
+    description: "get single item"
+    responses:
+      200:
+        body:
+          application/json:
+            schema: product
+      404:
+      500:      
+    
+  
