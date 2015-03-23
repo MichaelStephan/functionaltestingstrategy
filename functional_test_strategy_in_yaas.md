@@ -5,7 +5,7 @@ This document summarizes the functional test strategy applied by YaaS teams. The
 
 In order to understand this document various test types need to be defined:
  
-***Unit testing:*** is a software testing method by which individual units of source code, sets of one or more computer program modules together with associated control data, usage procedures, and operating procedures, are tested to determine whether they are fit for use. Intuitively, one can view a unit as the smallest testable part of an application. Unit tests are short code fragments created by programmers or occasionally by white box testers during the development process. It is also known as component testing. Substitutes such as method stubs, mock objects, fakes, and test harnesses can be used to assist testing a module in isolation
+***Unit testing:*** is a software testing method by which individual units of source code, sets of one or more computer program modules together with associated control data, usage procedures, and operating procedures, are tested to determine whether they are fit for use. Intuitively, one can view a unit as the smallest testable part of an application. Unit tests are short code fragments created by programmers or occasionally by white box testers during the development process. Substitutes such as method stubs, mock objects, fakes, and test harnesses can be used to assist testing a module/ service in isolation
  
 ***Acceptance testing:*** is a term used in agile software development methodologies referring to the functional testing of a user story by the software development team during the implementation phase. The product owner specifies scenarios to test when a user story has been correctly implemented. A story can have one or many acceptance tests, whatever it takes to ensure the functionality works. Acceptance tests are black-box system tests. Each acceptance test represents some expected result from the service
  
@@ -15,15 +15,25 @@ In order to understand this document various test types need to be defined:
 
 All test types will be illustrated in examples.
 
+## Goals
 
-## Indepencene vs traditional testing
+### Team indepedence
 The independance of teams is one of the YaaS success factors. By applying traditional integration tests requiring dependant services to be operational at any time is a clear violation of this rule as such a services is most probably maintained by a different team, it may be subject to slow, and unreliable networks, and maybe unreliable itself. The goal of this test strategy is to make teams as independent from each other, during the entire software development lifecycle. This can only be achieved by testing as much as possible locally, detached from any network.
 
-## Guarantee business continuity for consumers
-A new service release should avoid introducing changes which will break fuctionalities of consumers. In case this would need to happen a new major release should be introduced and so all releated communications.
+### Business continuity for consumers
+A new service release should avoid introducing changes which will break fuctionalities of consumers by all means. The YaaS functional testing strategy focuses on help identifying any changes impacting the consumer interfaces.
+This document covers only minor versions changes and does not deal with major version. In order to guarantee that new minor versions do not introduce any breaking changes into a service, previous test suites need to be re-run against the most recent service version. 
+
+![acceptancetestsuites](./images/acceptancetestsuites.tiff "Acceptance test suites")
+
+Example: a team has already implemented two minor version of its service, v1.1 and v1.2. The team is currently working on another version v1.3. When building the most recent version the continous integration environment (CI) automatically re-runs all the existing acceptance test suites (v1.1. and v1.2) against the newest service implementation 1.3. In case the build breaks the team needs to investigate why the old test suites aren't compatible anymore with the new implementation:
+
+* was it forgotten to introduce a new major version?
+* was it a bug?
 
 
-## The anatonomy of a microservice
+
+## The anatomy of a microservice
 Each microservice is composed out of following components:
 
 * Rest API: the REST contract exposed by the service (called by consumers via http)
@@ -35,11 +45,41 @@ Each microservice is composed out of following components:
 ![anatomy](./images/anatomy.tiff "Anatomy of a microservice")
 
 
+## Examples
+In the following sections the authors will summarize each test type and show how each test type shall be implemented in the context of a microservice. Besides the implementation examples the authors also describe the business goals per test type. 
 
-## Unit testing
+![exampleservices](./images/exampleservices.tiff "Example services")
+
+A traditional commerce use-case consisting of a product, price and product details service will be used to illustrate the concepts.
+
+
+### Unit testing
+
+
+#### REST API testing
+The REST API in a microservice is in YaaS well defined by its RAML definition file. The interface exposed by the REST API needs to be completely tested in regards of:
+
+* compliance to RAML definition 
+* correctness of functionality in positive scenarios
+* correctness of functionality in negative scenarios
+
+In order to achieve a high test coverage with minimum effort all layers beneath the REST API need to be mocked. In addition it is required that a unit test can spawn a test server with mocks injected.
+
 ![unittesting](./images/unittesting_restapi.tiff "Unit testing of a microservice - REST API")
 
+The given visualization shows the test subject highlighted in red. Test doubles are marked with magenta. Blue layers are not relevant for this test type. An implementation of the given test type can be found at [link](https://github.com/MichaelStephan/functionaltestingstrategy/tree/master/sample/productservice/src/test/java/api). What can be seen when looking into the example is the separation of the actual test double and service initialization and the actual expecations in the test implementation. With the given approach it is easy to implemented the goal of business continuity for consumers.
+
+
+#### Business logic testing
+The correctness of business logic needs to be tested in regards of:
+
+* correctness of functionality in positive scenarios
+* correctness of functionality in negative scenarios
+
+
+
 ![unittesting](./images/unittesting_businesslogic.tiff "Unit testing of a microservice - business logic")
+
 
 ![unittesting](./images/unittesting_dataaccesslogic.tiff "Unit testing of a microservice - data access logic")
 
@@ -49,14 +89,6 @@ Each microservice is composed out of following components:
 
 ![acceptancetesting](./images/acceptancetesting.tiff "Acceptance testing of a microservice")
 
-In order to guarantee that new minor versions do not introduce any breaking changes into a service, previous acceptance test suites need to be re-run against the most recent service version. 
-
-![acceptancetestsuites](./images/acceptancetestsuites.tiff "Acceptance test suites")
-
-Example: a team has already implemented two minor version of its service, v1.1 and v1.2. The team is currently working on another version v1.3. When building the most recent version the continous integration environment (CI) automatically re-runs all the existing acceptance test suites (v1.1. and v1.2) against the newest service implementation 1.3. In case the build breaks the team needs to investigate why the old test suites aren't compatible anymore with the new implementation:
-
-* was it forgotten to introduce a new major version?
-* was it a bug?
 
 
 
@@ -70,7 +102,9 @@ References:
 - 
 
 
+## Guidelines
 
+### Naming conventions
 
 
 
