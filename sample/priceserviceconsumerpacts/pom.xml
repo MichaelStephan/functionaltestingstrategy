@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>yaas.io</groupId>
+    <artifactId>priceservice_consumer_pacts</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <build>
+      <plugins>
+        <plugin>
+           <groupId>au.com.dius</groupId>
+          <artifactId>pact-jvm-provider-maven_2.11</artifactId>
+          <version>2.1.9</version>
+          <configuration>
+            <serviceProviders>
+              <!-- You can define as many as you need, but each must have a unique name -->
+              <serviceProvider>
+                <name>priceservice</name>
+                <!-- All the provider properties are optional, and have sensible defaults (shown below) -->
+                <protocol>http</protocol>
+                <host>localhost</host>
+                <port>10001</port>
+                <path>/</path>
+                <consumers>
+                  <!-- Again, you can define as many consumers for each provider as you need, but each must have a unique name -->
+                  <consumer>
+                    <name>productdetailsservice</name>
+                    <!--  currently supports a file path using pactFile or a URL using pactUrl -->
+                    <pactFile>/Users/i303874/Desktop/functionaltestingstrategy/sample/productdetailsservice/target/pacts/productdetailsservice-priceservice.json</pactFile>
+                  </consumer>
+                </consumers>
+              </serviceProvider>
+            </serviceProviders>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+</project>

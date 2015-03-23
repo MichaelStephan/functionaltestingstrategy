@@ -45,7 +45,7 @@ public class ProductDetailsContentDaoImpl implements ProductDetailsContentDao {
                 result.setException(throwable);
             }
         });
-        priceService.get(getResult, id);
+        priceService.getPrices(getResult, id);
         return result;
     }
 }

@@ -74,4 +74,26 @@ public class API {
 
         priceService.get(result, id);
     }
+
+    @GET
+    @Path("/products/{productId}/price")
+    @Produces(MediaType.APPLICATION_JSON)
+    public void getPrice(@Suspended final AsyncResponse asyncResponse, @Context HttpHeaders headers, @PathParam("productId") String id) {
+        checkNotNull(id);
+
+        SettableFuture<List<Price>> result = SettableFuture.create();
+        Futures.addCallback(result, new FutureCallback<List<Price>>() {
+            @Override
+            public void onSuccess(List<Price> prices) {
+                asyncResponse.resume(Response.ok().entity(transform(prices.stream().findFirst().get())).build());
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                asyncResponse.resume(throwable);
+            }
+        });
+
+        priceService.get(result, id);
+    }
 }

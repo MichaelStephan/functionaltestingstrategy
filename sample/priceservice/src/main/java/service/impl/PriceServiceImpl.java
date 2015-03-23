@@ -7,6 +7,7 @@ import service.domain.Price;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Future;
 
 /**
@@ -16,7 +17,7 @@ public class PriceServiceImpl implements PriceService {
     @Override
     public Future<List<Price>> get(SettableFuture<List<Price>> result, String id) {
         result.set(Arrays.asList(new Price[]{
-                new Price("bla", "bla", new BigDecimal(123))
+                new Price(UUID.randomUUID().toString(), "EUR", new BigDecimal(123))
         }));
         return result;
     }

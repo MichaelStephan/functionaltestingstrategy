@@ -26,7 +26,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Created by i303874 on 3/20/15.
  */
 public class PriceServiceDaoImpl {
-    private class PriceServiceGetResponse extends GenericType<List<APIPrice>> {}
+    private class PriceServiceGetResponse extends GenericType<List<APIPrice>> {
+    }
 
     private String priceServiceUrl;
 
@@ -49,12 +50,31 @@ public class PriceServiceDaoImpl {
         this.client = ClientBuilder.newClient(clientConfig);
     }
 
-    public Future<List<APIPrice>> get(SettableFuture<List<APIPrice>> result, String productId) {
+    public Future<List<APIPrice>> getPrices(SettableFuture<List<APIPrice>> result, String productId) {
         client.target(priceServiceUrl).path("/products/" + productId + "/prices").request(MediaType.APPLICATION_JSON).async().get(new InvocationCallback<Response>() {
             @Override
             public void completed(Response response) {
                 if (response.getStatus() == 200) {
                     result.set(response.readEntity(new PriceServiceGetResponse()));
+                } else {
+                    result.setException(new DaoException("invalid error code " + response.getStatus()));
+                }
+            }
+
+            @Override
+            public void failed(Throwable throwable) {
+                result.setException(new DaoException(throwable));
+            }
+        });
+        return result;
+    }
+
+    public Future<APIPrice> getPrice(SettableFuture<APIPrice> result, String productId) {
+        client.target(priceServiceUrl).path("/products/" + productId + "/price").request(MediaType.APPLICATION_JSON).async().get(new InvocationCallback<Response>() {
+            @Override
+            public void completed(Response response) {
+                if (response.getStatus() == 200) {
+                    result.set(response.readEntity(APIPrice.class));
                 } else {
                     result.setException(new DaoException("invalid error code " + response.getStatus()));
                 }
