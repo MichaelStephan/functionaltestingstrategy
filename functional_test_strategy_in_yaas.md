@@ -82,7 +82,7 @@ The test of the business logic requires the data access logic to be mocked still
 
 #### Data access logic testing
 
-A microservice has at most two dependency types, other microservices or backing services (e.g. database). The data access logic shields the business logic from the technical details of underlying implementations and therefore it needs to be subject to traditional unit tests as well.
+A microservice has at most two dependency types, other microservices or infrastructure components (e.g. database). The data access logic shields the business logic from the technical details of underlying implementations and therefore it needs to be subject to traditional unit tests as well.
 
 In general following scenarions are subject to tests:
 
@@ -93,7 +93,7 @@ In general following scenarions are subject to tests:
 
 
 #### Data access logic testing - data sources
-In case a microservice communicates directly with a backing service a backing service instance needs to be spawnable in a unit test. For JVM based backing services this is normally not a problem, for other backing services tool like docker may be used. At [link](https://github.com/MichaelStephan/functionaltestingstrategy/blob/master/sample/productservice/src/test/java/dao/impl/CassandraProductDaoTest.java) the authors show how a cassandra database could be embedded into the JVM process executing the actual unit tests.
+In case a microservice communicates directly with a infrastructure component it needs to be spawnable in a unit test. For JVM based infrastructure components this is normally not a problem, for other infrastructure components tools like docker may be used. At [link](https://github.com/MichaelStephan/functionaltestingstrategy/blob/master/sample/productservice/src/test/java/dao/impl/CassandraProductDaoTest.java) the authors show how a cassandra database could be embedded into the JVM process executing the actual unit tests.
 
 
 #### Data access logic testing - integration logic
@@ -120,22 +120,34 @@ return builder.uponReceiving("a request for price")
 
 An example is available at [link](https://github.com/MichaelStephan/functionaltestingstrategy/blob/master/sample/productdetailsservice/src/test/java/dao/impl/GivenProductIdAsArgumentToGetPricesThenReturnProductPriceTest.java). When the unit tests are executed pact jvm will run all tests and spawn mock services if applicable. During test execution pact files will be generated. Those files can be re-used as will be described in the contract testing section. 
 
-
-## Acceptance testing
-
-![acceptancetesting](./images/acceptancetesting.tiff "Acceptance testing of a microservice")
-
-
-
-
-
-
 ## Contract testing
 As mentioned in the *Data access logic testing - integration logic* section each time a functional data access logic test is executed a pact file is generated and made available in a central pact repository. From there the pact files are available for further usage, e.g. a pact compliance test against a given product could be run if the producer is somehow modified. In addition automated tests could be run periodically as well. 
 
 ![contracttestingstrat](./images/contracttestingstrat.tiff "Contract testing")
 
-The goal of the automated contract tests is to protect any consumers from unforseen non-compatible producer interface changes. The benfit of the given process is that the pact files are automatically generated and no team has to do additiona work except for maintaining its unit tests.  
+The goal of the automated contract tests is to protect any consumers from unforseen non-compatible producer interface changes. The benfit of the given process is that the pact files are automatically generated and 
+no team has to do additiona work except for maintaining its unit tests.  
+
+
+## Acceptance testing
+Each user story has a well defined list of acceptance criterias:
+
+* GET on /sites/\{code\}/service returns a list of configured service providers 
+* POST on on /sites/\{code\}/service creates a new service provider
+	* if there is a service provider with the given id, 409 is returned
+* ...
+
+Each single item of the list needs to be tested automatically. In contradiction to the REST API testing  it is forbidden to mock any components in the actual microservice, it is only allowed to mock remote producer services. In case a service requires infrastructure components these need to be run embedded in the test. Again the rule applies that acceptance tests need to be runnable independant from any other services or infrastructure.
+
+![acceptancetesting](./images/acceptancetesting.tiff "Acceptance testing of a microservice")
+
+As with REST API tests the acceptance tests require a test server to be running. For the actual acceptance test the test simulates a real user interacting with the server. Subject to test is the service's functional correctness and behavior in case of user error.
+
+As with the REST API testing it needs to be guaranteed that a new minor version of a service does not introduce any breaking changes into its interface. Therefor it is mandatory that former minor versions' acceptance tests are re-run against the most recent version. This is inline with with the business continuity for consumers goal.
+
+
+## Smoke testing
+
 
 
 ## Guidelines
