@@ -32,7 +32,6 @@ Example: a team has already implemented two minor version of its service, v1.1 a
 * was it a bug?
 
 
-
 ## The anatomy of a microservice
 Each microservice is composed out of following components:
 
@@ -63,7 +62,7 @@ The REST API in a microservice is in YaaS well defined by its RAML definition fi
 * correctness of functionality in positive scenarios
 * correctness of functionality in negative scenarios
 
-In order to achieve a high test coverage with minimum effort all layers beneath the REST API need to be mocked. In addition it is required that a unit test can spawn a test server with mocks injected.
+In order to achieve a high test coverage with minimum effort the business logic layer beneath the REST API needs to be mocked. In addition it is required that a unit test can spawn a test server with mocks injected. The tests run real http requests against the test server.
 
 ![unittesting](./images/unittesting_restapi.tiff "Unit testing of a microservice - REST API")
 
@@ -76,13 +75,50 @@ The correctness of business logic needs to be tested in regards of:
 * correctness of functionality in positive scenarios
 * correctness of functionality in negative scenarios
 
-
-
 ![unittesting](./images/unittesting_businesslogic.tiff "Unit testing of a microservice - business logic")
 
+The test of the business logic requires the data access logic to be mocked still the tests are executed as traditional unit tests are, no test server is required.
+
+
+#### Data access logic testing
+
+A microservice has at most two dependency types, other microservices or backing services (e.g. database). The data access logic shields the business logic from the technical details of underlying implementations and therefore it needs to be subject to traditional unit tests as well.
+
+In general following scenarions are subject to tests:
+
+* correctness of functionality in positive scenarios
+* correctness of functionality in negative scenarios
 
 ![unittesting](./images/unittesting_dataaccesslogic.tiff "Unit testing of a microservice - data access logic")
 
+
+#### Data access logic testing - data sources
+In case a microservice communicates directly with a backing service a backing service instance needs to be spawnable in a unit test. For JVM based backing services this is normally not a problem, for other backing services tool like docker may be used. At [link](https://github.com/MichaelStephan/functionaltestingstrategy/blob/master/sample/productservice/src/test/java/dao/impl/CassandraProductDaoTest.java) the authors show how a cassandra database could be embedded into the JVM process executing the actual unit tests.
+
+
+#### Data access logic testing - integration logic
+The integration logic for interacting with other services needs to be technically and functionally tested. Technical tests cover edge cases like:
+
+* remote service not accessible
+* slow communication when interacting with remote service
+* ... 
+
+In order to simulate the given scenarios an http mocking tool is required. An example could be found at [link](https://github.com/MichaelStephan/functionaltestingstrategy/blob/master/sample/productdetailsservice/src/test/java/dao/impl/PriceServiceDaoImplTechnicalTest.java).
+
+For serving data during functional test we will ask teams to use [pact jvm](https://github.com/DiUS/pact-jvm) for producer service mocking. As can be seen in the given example a remote serivce can be mocked by defining the response it returns on a specific request. What can be seen in addition, the actual mocked response definition also contains data type rules, e.g. stringMatcher("currency", "[A-Z]{3}". The rule defines that the currency field in a given response needs to consist of exactly three capital letters.
+
+```
+return builder.uponReceiving("a request for price")
+	.path("/priceservice/products/" + productId + "/price")
+	.method("GET")
+    .willRespondWith()
+    .headers(headers)
+    .status(200)
+    .body(new PactDslJsonBody().guid("id", expectedId).stringMatcher("currency", "[A-Z]{3}", expectedCurrency).numberType("value", 99.90).asBody()).toFragment();
+    }
+```
+
+An example is available at [link](https://github.com/MichaelStephan/functionaltestingstrategy/blob/master/sample/productdetailsservice/src/test/java/dao/impl/GivenProductIdAsArgumentToGetPricesThenReturnProductPriceTest.java). When the unit tests are executed pact jvm will run all tests and spawn mock services if applicable. During test execution pact files will be generated. Those files can be re-used as will be described in the contract testing section. 
 
 
 ## Acceptance testing
@@ -94,12 +130,12 @@ The correctness of business logic needs to be tested in regards of:
 
 
 
-## Contact testing
-Contract testing is part of the acceptance tests. The goal is to evaluate the json schema compliance to make sure that is honors the define RAML contract.
+## Contract testing
+As mentioned in the *Data access logic testing - integration logic* section each time a functional data access logic test is executed a pact file is generated and made available in a central pact repository. From there the pact files are available for further usage, e.g. a pact compliance test against a given product could be run if the producer is somehow modified. In addition automated tests could be run periodically as well. 
 
-References:
-- https://www.npmjs.com/package/raml-mocker
-- 
+![contracttestingstrat](./images/contracttestingstrat.tiff "Contract testing")
+
+The goal of the automated contract tests is to protect any consumers from unforseen non-compatible producer interface changes. The benfit of the given process is that the pact files are automatically generated and no team has to do additiona work except for maintaining its unit tests.  
 
 
 ## Guidelines
