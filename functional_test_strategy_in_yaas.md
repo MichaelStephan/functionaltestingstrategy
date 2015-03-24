@@ -160,12 +160,11 @@ As with the REST API testing it needs to be guaranteed that a new minor version 
 Change: same as in section REST API testing.
 ```
 
-
 ## Smoke testing
 Tools like the robot framework or SOAPUI may be used to simulate real user journeys on the real stage/ production services. Smoke tests cover only happy paths and don't test an erroneous scenarios. Each team is asked to keep the amount of smoke tests to a minimum, e.g. one simple test per service resource.
 
 
-# TODO
+# Further TODOs
 
 ## How to enfore immutability of REST API tests and acceptance tests 
 
