@@ -110,7 +110,8 @@ The integration logic for interacting with other services needs to be technicall
 
 In order to simulate the given scenarios an http mocking tool is required. An example could be found at [link](https://github.com/MichaelStephan/functionaltestingstrategy/blob/master/sample/productdetailsservice/src/test/java/dao/impl/PriceServiceDaoImplTechnicalTest.java).
 
-For serving data during functional test we will ask teams to use [pact jvm](https://github.com/DiUS/pact-jvm) for producer service mocking. As can be seen in the given example a remote service can be mocked by defining the response it returns on a specific request. What can be seen in addition, the actual mocked response definition also contains data type rules, e.g. stringMatcher("currency", "[A-Z]{3}". The rule defines that the currency field in a given response needs to consist of exactly three capital letters.
+For serving data during functional test we suggest teams to use [pact jvm](https://github.com/DiUS/pact-jvm) for producer service mocking. Teams are allowed to use other technologies which create need to be able to create pact definitions during test execution and store them into the pact repository.
+As can be seen in the given example a remote service can be mocked by defining the response it returns on a specific request. What can be seen in addition, the actual mocked response definition also contains data type rules, e.g. stringMatcher("currency", "[A-Z]{3}". The rule defines that the currency field in a given response needs to consist of exactly three capital letters.
 
 ```
 return builder.uponReceiving("a request for price")
@@ -126,7 +127,7 @@ return builder.uponReceiving("a request for price")
 An example is available at [link](https://github.com/MichaelStephan/functionaltestingstrategy/blob/master/sample/productdetailsservice/src/test/java/dao/impl/GivenProductIdAsArgumentToGetPricesThenReturnProductPriceTest.java). When the unit tests are executed pact jvm will run all tests and spawn mock services. During test execution pact files will be generated. Those files can be re-used as will be described in the contract testing section. 
 
 ```
-Change: most teams don't test do tests on technical integration logic (e.g. test for timeouts). In additional teams will be asked to use pact-jvm for mocking.
+Change: most teams don't test do tests on technical integration logic (e.g. test for timeouts). In additional teams will be asked to use pact-jvm for mocking or equivalent technology.
 ```
 
 ## Contract testing
@@ -167,18 +168,22 @@ Tools like the robot framework or SOAPUI may be used to simulate real user journ
 # Delivery
 The authors of this guide are aware of the fact that all teams implemented their services differently, some follow a clean layered architecture as described above others don't. Still the concepts can be mapped to any kind of implementation patterns.  
 
-	* Periodically execute smoke testing (aka existing integration tests) in stage and production), due to TBD
-	* Create acceptance tests and embed into CI process (responsibility of all teams, tracked by Angela), due to TBD
-	* Create REST API tests and embed into CI process (responsibility of all teams, tracked by Angela), due to TBD
-	* Create data access logic tests - data sources and embed into CI process (responsibility of all teams, tracked by Angela), due to TBD
-	* Create data access logic tests - integration logic and embed into CI process  (responsibility of all teams, tracked by Angela), due to TBD 
-	* Setup pact repository (responsibility of Idefix), due to TBD
-	* Setup CI process to publish pact contracts into pact repository (reponsibility of all teams), due to TBD
-	* Periodically execute contract tests (responsibility of Idefix), due to TBD
-	
+| Tasks        | Responsible           | Due to  |
+| ------------- |:-------------:|:-----:|
+| Communicate test strategy to teams      | Angela | 02.04.2015 |
+| Periodically execute smoke testing (aka existing integration tests) in stage and production)      | all teams | TBD |
+| Create acceptance tests and embed into CI process      | all teams      |   TBD |
+| Create REST API tests and embed into CI process | all teams      |    TBD |
+| Create data access logic tests - data sources and embed into CI process | all teams      |    TBD |
+| Create data access logic tests - integration logic and embed into CI process | all teams      |    TBD |
+| Setup pact repository | Idefix      |    TBD |
+| Setup CI process to publish pact contracts into pact repository | all teams      |    TBD |
+| Periodically execute contract tests | Idefix      |    TBD |
 
-# Further TODOs
 
-## How to enfore immutability of REST API tests and acceptance tests 
-## Implications of test failures (e.g. stop CI process)
-
+# TODOs
+* How to enfore immutability of REST API tests and acceptance tests
+* Implications of test failures (e.g. stop CI process)
+* How to monitor team's compliance with test strategy
+* How to incorporate proxy into local tests (e.g. docker)
+* How to incorporate automated raml compliance checks into local tests (tool by marek koniew)
