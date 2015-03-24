@@ -63,7 +63,7 @@ In order to achieve a high test coverage with minimum effort the business logic 
 
 ![unittesting](./images/unittesting_restapi.tiff "Unit testing of a microservice - REST API")
 
-The given visualization shows the test subject highlighted in red. Test doubles are marked with magenta. Blue layers are not relevant for this test type. An implementation of the given test type can be found at [link](https://github.com/MichaelStephan/functionaltestingstrategy/tree/master/sample/productservice/src/test/java/api). What can be seen when looking into the example is the separation of the actual test double and service initialization and the actual expectations in the test implementation. With the given approach it is easy to be implemented the goal of business continuity for consumers.
+The given visualization shows the test subject highlighted in red. Test doubles are marked with purple. Blue layers are not relevant for this test type. An implementation of the given test type can be found at [link](https://github.com/MichaelStephan/functionaltestingstrategy/tree/master/sample/productservice/src/test/java/api). What can be seen when looking into the example is the separation of the actual test double and service initialization and the actual expectations in the test implementation. With the given approach it is easy to be implemented the goal of business continuity for consumers.
 
 ```
 Change: this is fundamental change in the way tests are executed now. It requires that all team follow a layer implementation style. In addition it requires that a test server can be spawned from source code. Finally tests need to be structured in a way that test server behavior setup and test expectations are separated.
@@ -164,8 +164,21 @@ Change: same as in section REST API testing.
 Tools like the robot framework or SOAPUI may be used to simulate real user journeys on the real stage/ production services. Smoke tests cover only happy paths and don't test an erroneous scenarios. Each team is asked to keep the amount of smoke tests to a minimum, e.g. one simple test per service resource.
 
 
+# Delivery
+The authors of this guide are aware of the fact that all teams implemented their services differently, some follow a clean layered architecture as described above others don't. Still the concepts can be mapped to any kind of implementation patterns.  
+
+	* Periodically execute smoke testing (aka existing integration tests) in stage and production), due to TBD
+	* Create acceptance tests and embed into CI process (responsibility of all teams, tracked by Angela), due to TBD
+	* Create REST API tests and embed into CI process (responsibility of all teams, tracked by Angela), due to TBD
+	* Create data access logic tests - data sources and embed into CI process (responsibility of all teams, tracked by Angela), due to TBD
+	* Create data access logic tests - integration logic and embed into CI process  (responsibility of all teams, tracked by Angela), due to TBD 
+	* Setup pact repository (responsibility of Idefix), due to TBD
+	* Setup CI process to publish pact contracts into pact repository (reponsibility of all teams), due to TBD
+	* Periodically execute contract tests (responsibility of Idefix), due to TBD
+	
+
 # Further TODOs
 
 ## How to enfore immutability of REST API tests and acceptance tests 
-
+## Implications of test failures (e.g. stop CI process)
 
