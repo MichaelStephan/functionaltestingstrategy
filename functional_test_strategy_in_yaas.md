@@ -156,7 +156,7 @@ Each single item of the list needs to be tested automatically. In contradiction 
 
 ![acceptancetesting](./images/acceptancetesting.tiff "Acceptance testing of a microservice")
 
-As with REST API tests the acceptance tests require an embedded test server to be running. For the actual acceptance test the test simulates a real user interacting with the server. Subject to test is the service's functional correctness and behavior in case of user input error.
+As with REST API tests the acceptance tests require an embedded test server to be running. For the actual acceptance test the test simulates a real user interacting with the server. Subject to test is the service's functional correctness and behavior in case of user input error. If no already tested during REST API testing the compliance with the RAML definition needs also be tested.
 
 As with the REST API testing it needs to be guaranteed that a new minor version of a service does not introduce any breaking changes into its interface. Therefor it is mandatory that former minor versions' acceptance tests are re-run against the most recent version. This is inline with with the business continuity for consumers goal.
 
