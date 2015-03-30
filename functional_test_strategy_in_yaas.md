@@ -173,7 +173,7 @@ A team needs to take responsiblity of the pact repository and the CI pipelines n
 
 For the General Availability we would like to rollout the entire process.
 
-For Beta we propose teams to start with:
+First steps for teams,  we propose  to start with:
 * REST-API Testing
 * Business Logic Testing
 * Data Access Logic Testing
@@ -183,6 +183,10 @@ For Beta we propose teams to start with:
 * Test everything locally
 * Use the pact file against the provider on stage/production to make sure that the contract and expecations are still the same
 * Only if test with the pact file against production relaese the service on stage/production
+
+Second step:
+* Automatic check of pact file towards stage/production
+* Automatic Deployment pipeline integration of contract testing
 
 # Delivery
 The authors of this guide are aware of the fact that all teams implemented their services differently, some follow a clean layered architecture as described above others don't. Still the concepts can be mapped to any kind of implementation patterns.  
