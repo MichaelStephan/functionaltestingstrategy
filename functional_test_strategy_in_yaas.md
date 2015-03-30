@@ -134,15 +134,7 @@ An example is available at [link](https://github.com/MichaelStephan/functionalte
 Change: most teams don't test do tests on technical integration logic (e.g. test for timeouts). In additional teams will be asked to use pact-jvm for mocking or equivalent technology.
 ```
 
-## Contract testing
-As mentioned in the *Data access logic testing - integration logic* section each time a functional data access logic test is executed a pact file is generated and made available in a central pact repository. From there the pact files are available for further usage, e.g. a pact compliance test against a given producer could be run if the producer is somehow modified. In addition automated tests could be run periodically as well.
 
-![contracttestingstrat](./images/contracttestingstrat.tiff "Contract testing")
-
-The goal of the automated contract tests is to protect any consumers from unforeseen non-compatible producer interface changes. The benefit of the given process is that the pact files are automatically generated and no team has to do additional work except for maintaining its unit tests.
-
-##### Change
-A team needs to take responsiblity of the pact repository and the CI pipelines need to be harmonized to leverage the central repository.
 
 ## Acceptance testing
 Each user story has a well defined list of acceptance criterias:
@@ -163,9 +155,34 @@ As with the REST API testing it needs to be guaranteed that a new minor version 
 ##### Change
 Same as in section REST API testing.
 
+
 ## Smoke testing
 Tools like the robot framework or SOAPUI may be used to simulate real user journeys on the real stage/ production services. Smoke tests cover only happy paths and don't test an erroneous scenarios. Each team is asked to keep the amount of smoke tests to a minimum, e.g. one simple test per service resource.
 
+## Contract testing
+As mentioned in the *Data access logic testing - integration logic* section each time a functional data access logic test is executed a pact file is generated and made available in a central pact repository. From there the pact files are available for further usage, e.g. a pact compliance test against a given producer could be run if the producer is somehow modified. In addition automated tests could be run periodically as well.
+
+![contracttestingstrat](./images/contracttestingstrat.tiff "Contract testing")
+
+The goal of the automated contract tests is to protect any consumers from unforeseen non-compatible producer interface changes. The benefit of the given process is that the pact files are automatically generated and no team has to do additional work except for maintaining its unit tests.
+
+##### Change
+A team needs to take responsiblity of the pact repository and the CI pipelines need to be harmonized to leverage the central repository.
+
+# Implementation proposal
+
+For the General Availability we would like to rollout the entire process.
+
+For Beta we propose teams to start with:
+* REST-API Testing
+* Business Logic Testing
+* Data Access Logic Testing
+* Integration Logic Testing
+* Data Source Logic Testing (if applicable)
+* Create a pact file
+* Test everything locally
+* Use the pact file against the provider on stage/production to make sure that the contract and expecations are still the same
+* Only if test with the pact file against production relaese the service on stage/production
 
 # Delivery
 The authors of this guide are aware of the fact that all teams implemented their services differently, some follow a clean layered architecture as described above others don't. Still the concepts can be mapped to any kind of implementation patterns.  
