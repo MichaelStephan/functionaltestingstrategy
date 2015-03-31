@@ -173,18 +173,23 @@ A team needs to take responsiblity of the pact repository and the CI pipelines n
 
 For the General Availability we would like to rollout the entire process.
 
-First steps for teams,  we propose  to start with:
+Minimal requirement for Open Beta:
+* Automated Acceptance Test for each story (if applicable)
+* Initially integrated tests are still allow (i.e. Product Details service can communicate with the real Product service and not a mock)
+
+How to get proceed for getting the full advantage of the strategy:
+* Acceptance Testing
 * REST-API Testing
 * Business Logic Testing
 * Data Access Logic Testing
 * Integration Logic Testing
 * Data Source Logic Testing (if applicable)
-* Create a pact file
+* Generate a pact file a pact compatible implementation
 * Test everything locally
 * Use the pact file against the provider on stage/production to make sure that the contract and expecations are still the same
 * Only if test with the pact file against production relaese the service on stage/production
 
-Second step:
+Before GA we want to introduce:
 * Automatic check of pact file towards stage/production
 * Automatic Deployment pipeline integration of contract testing
 
