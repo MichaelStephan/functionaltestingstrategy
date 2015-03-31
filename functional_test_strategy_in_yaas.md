@@ -31,6 +31,7 @@ Example: a team has already implemented two minor version of its service, v1.1 a
 
 * was it forgotten to introduce a new major version?
 * was it a bug?
+* was it a test case bug?
 
 ## The anatomy of a microservice
 Each microservice is composed out of following components:
@@ -86,7 +87,10 @@ In order to achieve a high test coverage with minimum effort the business logic 
 The given visualization shows the test subject highlighted in red. Test doubles are marked with purple. Blue layers are not relevant for this test type. An implementation of the given test type can be found at [link](https://github.com/MichaelStephan/functionaltestingstrategy/tree/master/sample/productservice/src/test/java/api). What can be seen when looking into the example is the separation of the actual test double and service initialization and the actual expectations in the test implementation. With the given approach it is easy implement the goal of business continuity for consumers.
 
 ##### Change
-This is fundamental change in the way tests are executed now. It requires that all team follow a layered implementation style. In addition it requires that a test server can be spawned from source code. Finally tests need to be structured in a way that test server behavior setup and test expectations are separated.
+This is fundamental change in the way tests are executed now:
+* It requires that all team follow a layered implementation style
+* In addition it requires that a test server can be spawned from source code
+* Finally tests need to be structured in a way that test server behavior setup and test expectations are separated
 
 ##### Level of freedom
 Teams may decide to limit the amount of REST API tests to only "correctness of functionality for negative scenarios" and "compliance to RAML definition for negative scenarios" only. This requires that all happy paths are covered by acceptance tests. 
@@ -159,7 +163,7 @@ Change: most teams don't test do tests on technical integration logic (e.g. test
 
 
 ## Smoke testing
-Tools like the robot framework or SOAPUI may be used to simulate real user journeys on the real stage/ production services. Smoke tests cover only happy paths and don't test an erroneous scenarios. Each team is asked to keep the amount of smoke tests to a minimum, e.g. one simple test per service resource.
+Tools like the robot framework or SOAPUI may be used to simulate real user journeys on the real stage/ production services. Smoke tests cover only happy paths and don't test an erroneous scenarios. Each team is asked to keep the amount of smoke tests to a minimum, e.g. one simple test per service resource. It should be possible to repeat smoke test without any extra system preparation or clean up i.e. smoke test should be immutable. Smoke test also shouldn't change state of the system e.g. shouldn't deactivate product.
 
 ## Contract testing
 As mentioned in the *Data access logic testing - integration logic* section each time a functional data access logic test is executed a pact file is generated and made available in a central pact repository. From there the pact files are available for further usage, e.g. a pact compliance test against a given producer could be run if the producer is somehow modified. In addition automated tests could be run periodically as well.
