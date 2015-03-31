@@ -4,11 +4,11 @@
 This document summarizes the functional test strategy applied by YaaS teams. The overarching goal of the strategy is to guarantee the delivery of functional correct services while keeping test costs minimal.
 
 In order to understand this document various test types need to be defined:
- 
-***Unit testing:*** is a software testing method by which individual units of source code, sets of one or more computer program modules together with associated control data, usage procedures, and operating procedures, are tested to determine whether they are fit for use. Intuitively, one can view a unit as the smallest testable part of an application. Unit tests are short code fragments created by programmers or occasionally by white box testers during the development process. Substitutes such as method stubs, mock objects, fakes, and test harnesses can be used to assist testing a module in isolation
- 
+
 ***Acceptance testing:*** is a term used in agile software development methodologies referring to the functional testing of a user story by the software development team during the implementation phase. The product owner specifies scenarios to test when a user story has been correctly implemented. A story can have one or many acceptance tests, whatever it takes to ensure the functionality works. Acceptance tests are black-box system tests. Each acceptance test represents some expected result from the service
  
+***Unit testing:*** is a software testing method by which individual units of source code, sets of one or more computer program modules together with associated control data, usage procedures, and operating procedures, are tested to determine whether they are fit for use. Intuitively, one can view a unit as the smallest testable part of an application. Unit tests are short code fragments created by programmers or occasionally by white box testers during the development process. Substitutes such as method stubs, mock objects, fakes, and test harnesses can be used to assist testing a module in isolation
+
 ***Contract testing:*** most services have dependencies to other services to fulfill their functionality. An interface contract test guarantees that dependent services do not change their contract which would result in service malfunction
 
 ***Smoke testing:*** is non-exhaustive software testing, ascertaining that the most crucial functions of a program work, but not bothering with finer details
@@ -49,6 +49,26 @@ In the following sections the authors will summarize each test type and show how
 ![exampleservices](./images/exampleservices.tiff "Example services")
 
 A traditional commerce use-case consisting of a product, price and product details service will be used to illustrate the concepts.
+
+
+## Acceptance testing
+Each user story has a well defined list of acceptance criterias:
+
+* GET on /sites/\{code\}/service returns a list of configured service providers 
+* POST on on /sites/\{code\}/service creates a new service provider
+	* if there is a service provider with the given id, 409 is returned
+* ...
+
+Each single item of the list needs to be tested automatically. In contradiction to the REST API testing it is forbidden to mock any components in the actual microservice. It is only allowed to mock remote producer services. In case a service requires infrastructure components these need to be run embedded in the test. Again the rule applies that acceptance tests need to be runnable independent from any other services or infrastructure (Exception: Still for Open Beta it is allowed but not encouraged to run tests against the real services).
+
+![acceptancetesting](./images/acceptancetesting.tiff "Acceptance testing of a microservice")
+
+As with REST API tests the acceptance tests require an embedded test server to be running. For the actual acceptance test the test simulates a real user interacting with the server. Subject to test is the service's functional correctness and behavior in case of user input error. If not tested during REST API testing the compliance with the RAML definition needs also be tested. For the latter use-case teams can re-use the [raml-validation-proxy](https://github.com/hybris/raml-validation-proxy). 
+
+As with the REST API testing it needs to be guaranteed that a new minor version of a service does not introduce any breaking changes into its interface. Therefore it is mandatory that former minor versions' acceptance tests are re-run against the most recent version. This is inline with with the business continuity for consumers goal.
+
+##### Change
+This is fundamental change in the way tests are executed now. It requires that all team follow a layered implementation style. In addition it requires that a test server can be spawned from source code. Finally tests need to be structured in a way that test server behavior setup and test expectations are separated.
 
 ### Unit testing
 
@@ -136,24 +156,6 @@ Change: most teams don't test do tests on technical integration logic (e.g. test
 
 
 
-## Acceptance testing
-Each user story has a well defined list of acceptance criterias:
-
-* GET on /sites/\{code\}/service returns a list of configured service providers 
-* POST on on /sites/\{code\}/service creates a new service provider
-	* if there is a service provider with the given id, 409 is returned
-* ...
-
-Each single item of the list needs to be tested automatically. In contradiction to the REST API testing it is forbidden to mock any components in the actual microservice. It is only allowed to mock remote producer services. In case a service requires infrastructure components these need to be run embedded in the test. Again the rule applies that acceptance tests need to be runnable independent from any other services or infrastructure.
-
-![acceptancetesting](./images/acceptancetesting.tiff "Acceptance testing of a microservice")
-
-As with REST API tests the acceptance tests require an embedded test server to be running. For the actual acceptance test the test simulates a real user interacting with the server. Subject to test is the service's functional correctness and behavior in case of user input error. If no already tested during REST API testing the compliance with the RAML definition needs also be tested. For the latter use-case teams can re-use the [raml-validation-proxy](https://github.com/hybris/raml-validation-proxy). 
-
-As with the REST API testing it needs to be guaranteed that a new minor version of a service does not introduce any breaking changes into its interface. Therefor it is mandatory that former minor versions' acceptance tests are re-run against the most recent version. This is inline with with the business continuity for consumers goal.
-
-##### Change
-Same as in section REST API testing.
 
 
 ## Smoke testing
