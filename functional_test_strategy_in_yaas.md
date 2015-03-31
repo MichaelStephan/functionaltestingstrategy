@@ -4,14 +4,14 @@
 This document summarizes the functional test strategy applied by YaaS teams. The overarching goal of the strategy is to guarantee the delivery of functional correct services while keeping test costs minimal.
 
 In order to understand this document various test types need to be defined:
- 
+
 ***Unit testing:*** is a software testing method by which individual units of source code, sets of one or more computer program modules together with associated control data, usage procedures, and operating procedures, are tested to determine whether they are fit for use. Intuitively, one can view a unit as the smallest testable part of an application. Unit tests are short code fragments created by programmers or occasionally by white box testers during the development process. Substitutes such as method stubs, mock objects, fakes, and test harnesses can be used to assist testing a module in isolation
- 
+
 ***Acceptance testing:*** is a term used in agile software development methodologies referring to the functional testing of a user story by the software development team during the implementation phase. The product owner specifies scenarios to test when a user story has been correctly implemented. A story can have one or many acceptance tests, whatever it takes to ensure the functionality works. Acceptance tests are black-box system tests. Each acceptance test represents some expected result from the service
- 
+
 ***Contract testing:*** most services have dependencies to other services to fulfill their functionality. An interface contract test guarantees that dependent services do not change their contract which would result in service malfunction.
 
-***Smoke testing:*** is non-exhaustive software testing, ascertaining that the most crucial functions of a program work, but not bothering with finer details.
+***Smoke testing:*** is non-exhaustive software testing, ascertaining that the most crucial functions of a program work, but not bothering with finer details. Smoke test should be idempotent and shouldn't change system state.
 
 All test types will be illustrated in examples.
 
@@ -23,14 +23,15 @@ The independence of teams is one of the YaaS success factors. Applying tradition
 ### Business continuity for consumers
 A new minor service version release must not introduce breaking changes. The YaaS functional testing strategy focuses on help identifying any changes impacting the consumer interfaces so that accidental errors can be detected before impacting real consumers and stop their services being available or functional correct.
 
-In order to guarantee that new minor versions do not introduce any breaking changes into a service, previous test suites need to be re-run against the most recent service version. 
+In order to guarantee that new minor versions do not introduce any breaking changes into a service, previous test suites need to be re-run against the most recent service version.
 
 ![acceptancetestsuites](./images/acceptancetestsuites.png "Acceptance test suites")
 
 Example: a team has already implemented two minor version of its service, v1.1 and v1.2. The team is currently working on another version v1.3. When building the most recent version the continuous integration environment (CI) automatically re-runs all the existing acceptance test suites (v1.1. and v1.2) against the newest service implementation 1.3. In case the build breaks the team needs to investigate why the old test suites aren't compatible anymore with the new implementation:
 
 * was it forgotten to introduce a new major version?
-* was it a bug?
+* was it a service bug?
+* was it a test case bug?
 
 ## The anatomy of a microservice
 Each microservice is composed out of following components:
@@ -38,13 +39,13 @@ Each microservice is composed out of following components:
 * Rest API: the REST contract exposed by the service (called by consumers via http)
 * Business logic: the actual implementation of the service logic (called by resources layer or business logic)
 * Data access logic: mechanism to dispatch to either the integration logic or data source for fetching data objects
-* Integration logic: mechanism for interaction with other services (called by business logic) 
+* Integration logic: mechanism for interaction with other services (called by business logic)
 * Data sources: mechanism for persisting data (called by business logic)
 
 ![anatomy](./images/anatomy.png "Anatomy of a microservice")
 
 ## Examples
-In the following sections the authors will summarize each test type and show how each test type shall be implemented in the context of a microservice. Besides the implementation examples the authors also describe the business goals per test type. 
+In the following sections the authors will summarize each test type and show how each test type shall be implemented in the context of a microservice. Besides the implementation examples the authors also describe the business goals per test type.
 
 ![exampleservices](./images/exampleservices.png "Example services")
 
@@ -55,7 +56,7 @@ A traditional commerce use-case consisting of a product, price and product detai
 #### REST API testing
 The REST API in a microservice is in YaaS well defined by its RAML definition file. The interface exposed by the REST API needs to be completely tested in regards of:
 
-* compliance to RAML definition 
+* compliance to RAML definition
 * correctness of functionality for positive scenarios
 * correctness of functionality for negative scenarios
 
@@ -65,8 +66,16 @@ In order to achieve a high test coverage with minimum effort the business logic 
 
 The given visualization shows the test subject highlighted in red. Test doubles are marked with purple. Blue layers are not relevant for this test type. An implementation of the given test type can be found at [link](https://github.com/MichaelStephan/functionaltestingstrategy/tree/master/sample/productservice/src/test/java/api). What can be seen when looking into the example is the separation of the actual test double and service initialization and the actual expectations in the test implementation. With the given approach it is easy to be implemented the goal of business continuity for consumers.
 
+<b>Optional</b><br>
+You can verify coverage of RAML definition with additional tool [Raml Validation Proxy](https://github.com/hybris/raml-validation-proxy)
+You can run all calls to mocked business logic thorugh proxy which can verify coverage of RAML definition. If any endpoint or response code won't be visited with your test, you will receive convenient report from _RAML Validation Proxy_ tool. Proxy is fully transparent for your test and can be integrated without extra implementation in your test.
+
 ```
-Change: this is fundamental change in the way tests are executed now. It requires that all team follow a layer implementation style. In addition it requires that a test server can be spawned from source code. Finally tests need to be structured in a way that test server behavior setup and test expectations are separated.
+Change: this is fundamental change in the way tests are executed now.
+It requires that all team follow a layer implementation style.
+In addition it requires that a test server can be spawned from source code.
+Finally tests need to be structured in a way that test server behavior setup
+and test expectations are separated.
 ```
 
 #### Business logic testing
@@ -98,7 +107,9 @@ In general following scenarios are subject to tests:
 In case a microservice communicates directly with a infrastructure component, the latter needs to be spawned in a unit test. For JVM based infrastructure components this is normally not a problem, for other infrastructure components tools like docker may be used. At [link](https://github.com/MichaelStephan/functionaltestingstrategy/blob/master/sample/productservice/src/test/java/dao/impl/CassandraProductDaoTest.java) the authors show how a cassandra database could be embedded into the JVM process executing the actual unit tests.
 
 ```
-Change: most of the teams are not impacted as they don't interact with infrastructure components directly. Some teams still are required to do so and already use embedded infrastructure components, e.g. for kafka.
+Change: most of the teams are not impacted as they don't interact
+with infrastructure components directly. Some teams still are required
+to do so and already use embedded infrastructure components, e.g. for kafka.
 ```
 
 #### Data access logic testing - integration logic
@@ -106,7 +117,7 @@ The integration logic for interacting with other services needs to be technicall
 
 * remote service not accessible
 * slow communication when interacting with remote service
-* ... 
+* ...
 
 In order to simulate the given scenarios an http mocking tool is required. An example could be found at [link](https://github.com/MichaelStephan/functionaltestingstrategy/blob/master/sample/productdetailsservice/src/test/java/dao/impl/PriceServiceDaoImplTechnicalTest.java).
 
@@ -124,10 +135,11 @@ return builder.uponReceiving("a request for price")
     }
 ```
 
-An example is available at [link](https://github.com/MichaelStephan/functionaltestingstrategy/blob/master/sample/productdetailsservice/src/test/java/dao/impl/GivenProductIdAsArgumentToGetPricesThenReturnProductPriceTest.java). When the unit tests are executed pact jvm will run all tests and spawn mock services. During test execution pact files will be generated. Those files can be re-used as will be described in the contract testing section. 
+An example is available at [link](https://github.com/MichaelStephan/functionaltestingstrategy/blob/master/sample/productdetailsservice/src/test/java/dao/impl/GivenProductIdAsArgumentToGetPricesThenReturnProductPriceTest.java). When the unit tests are executed pact jvm will run all tests and spawn mock services. During test execution pact files will be generated. Those files can be re-used as will be described in the contract testing section.
 
 ```
-Change: most teams don't test do tests on technical integration logic (e.g. test for timeouts). In additional teams will be asked to use pact-jvm for mocking or equivalent technology.
+Change: most teams don't test do tests on technical integration logic (e.g. test for timeouts).
+In additional teams will be asked to use pact-jvm for mocking or equivalent technology.
 ```
 
 ## Contract testing
@@ -144,7 +156,7 @@ Change: a team needs to take responsiblity of the pact repository and the CI pip
 ## Acceptance testing
 Each user story has a well defined list of acceptance criterias:
 
-* GET on /sites/\{code\}/service returns a list of configured service providers 
+* GET on /sites/\{code\}/service returns a list of configured service providers
 * POST on on /sites/\{code\}/service creates a new service provider
 	* if there is a service provider with the given id, 409 is returned
 * ...
@@ -162,7 +174,7 @@ Change: same as in section REST API testing.
 ```
 
 ## Smoke testing
-Tools like the robot framework or SOAPUI may be used to simulate real user journeys on the real stage/ production services. Smoke tests cover only happy paths and don't test an erroneous scenarios. Each team is asked to keep the amount of smoke tests to a minimum, e.g. one simple test per service resource.
+Tools like the robot framework or SOAPUI may be used to simulate real user journeys on the real stage/ production services. Smoke tests cover only happy paths and don't test an erroneous scenarios. Each team is asked to keep the amount of smoke tests to a minimum, e.g. one simple test per service resource. It should be possible to repeat smoke test without any extra system preparation or clean up i.e. smoke test should be immutable. Smoke test also shouldn't change state of the system e.g. shouldn't deactivate product.
 
 
 # Delivery
@@ -182,8 +194,8 @@ The authors of this guide are aware of the fact that all teams implemented their
 
 
 # TODOs
-* How to enfore immutability of REST API tests and acceptance tests
+* How to enforce immutability of REST API tests and acceptance tests
 * Implications of test failures (e.g. stop CI process)
 * How to monitor team's compliance with test strategy
 * How to incorporate proxy into local tests (e.g. docker)
-* How to incorporate automated raml compliance checks into local tests (tool by marek koniew)
+* ~~How to incorporate automated raml compliance checks into local tests (tool by marek koniew)~~
