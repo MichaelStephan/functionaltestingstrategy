@@ -9,7 +9,7 @@ In order to understand this document various test types need to be defined:
  
 ***Unit testing:*** is a software testing method by which individual units of source code, sets of one or more computer program modules together with associated control data, usage procedures, and operating procedures, are tested to determine whether they are fit for use. Intuitively, one can view a unit as the smallest testable part of an application. Unit tests are short code fragments created by programmers or occasionally by white box testers during the development process. Substitutes such as method stubs, mock objects, fakes, and test harnesses can be used to assist testing a module in isolation
 
-***Contract testing:*** most services have dependencies to other services to fulfill their functionality. An interface contract test guarantees that dependent services do not change their contract which would result in service malfunction
+***Consumer contract testing:*** most services have dependencies to other services to fulfill their functionality. An interface contract test guarantees that dependent services do not change their contract which would result in service malfunction
 
 ***Smoke testing:*** is non-exhaustive software testing, ascertaining that the most crucial functions of a program work, but not bothering with finer details. Smoke test should be idempotent and shouldn't change system state
 
@@ -165,7 +165,7 @@ Change: most teams don't test do tests on technical integration logic (e.g. test
 ## Smoke testing
 Tools like the robot framework or SOAPUI may be used to simulate real user journeys on the real stage/ production services. Smoke tests cover only happy paths and don't test an erroneous scenarios. Each team is asked to keep the amount of smoke tests to a minimum, e.g. one simple test per service resource. It should be possible to repeat smoke test without any extra system preparation or clean up i.e. smoke test should be immutable. Smoke test also shouldn't change state of the system e.g. shouldn't deactivate product.
 
-## Contract testing
+## Consumer contract testing
 As mentioned in the *Data access logic testing - integration logic* section each time a functional data access logic test is executed a pact file is generated and made available in a central pact repository. From there the pact files are available for further usage, e.g. a pact compliance test against a given producer could be run if the producer is somehow modified. In addition automated tests could be run periodically as well.
 
 ![contracttestingstrat](./images/contracttestingstrat.tiff "Contract testing")
