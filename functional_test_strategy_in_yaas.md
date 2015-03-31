@@ -181,11 +181,12 @@ Minimal requirement for Open Beta:
 
 How to get proceed for getting the full advantage of the strategy:
 * Acceptance Testing
-* REST-API Testing
-* Business Logic Testing
-* Data Access Logic Testing
-* Integration Logic Testing
-* Data Source Logic Testing (if applicable)
+* Unit Testing
+	* REST-API Testing
+	* Business Logic Testing
+	* Data Access Logic Testing
+	* Integration Logic Testing
+	* Data Source Logic Testing (if applicable)
 * Generate a pact file a pact compatible implementation
 * Test everything locally
 * Use the pact file against the provider on stage/production to make sure that the contract and expecations are still the same
