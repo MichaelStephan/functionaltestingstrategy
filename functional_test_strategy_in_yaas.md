@@ -11,7 +11,7 @@ In order to understand this document various test types need to be defined:
 
 ***Contract testing:*** most services have dependencies to other services to fulfill their functionality. An interface contract test guarantees that dependent services do not change their contract which would result in service malfunction
 
-***Smoke testing:*** is non-exhaustive software testing, ascertaining that the most crucial functions of a program work, but not bothering with finer details
+***Smoke testing:*** is non-exhaustive software testing, ascertaining that the most crucial functions of a program work, but not bothering with finer details. Smoke test should be idempotent and shouldn't change system state
 
 All test types will be illustrated in examples.
 
