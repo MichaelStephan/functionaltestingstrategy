@@ -1,4 +1,4 @@
-#Functional Test Strategy in YaaS (DRAFT v0.1)
+#Automated Functional Test Strategy in YaaS (DRAFT v0.1)
 
 ## Introduction
 This document summarizes the functional test strategy applied by YaaS teams. The overarching goal of the strategy is to guarantee the delivery of functional correct services while keeping test costs minimal.
