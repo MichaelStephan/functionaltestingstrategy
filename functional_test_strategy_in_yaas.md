@@ -18,10 +18,10 @@ All test types will be illustrated in examples.
 ## Goals
 
 ### Team independence
-The independence of teams is one of the YaaS success factors. Applying traditional integration tests requires dependent services to be operational at any time which is a clear violation of this rule as such services are most probably maintained by a different team, are may be subject to slow, and unreliable networks, and maybe unreliable themselves. The goal of this test strategy is to make teams as independent from each other, during the entire software development lifecycle. This can only be achieved by testing as much as possible locally, detached from any network.
+The independence of teams is one of the YaaS success factors. Applying traditional integration tests requires dependent services to be operational at any time which is a clear violation of this rule as such services are most probably maintained by a different team, may be subject to slow, and unreliable networks, and maybe unreliable themselves. The goal of this test strategy is to make teams as independent from each other, during the entire software development lifecycle. This can only be achieved by testing as much as possible locally, detached from any network.
 
 ### Business continuity for consumers
-A new minor service version release must not introduce breaking changes. The YaaS functional testing strategy focuses on help identifying any changes impacting the consumer interfaces so that accidental errors can be detected before impacting real consumers and stop their services being available or functional correct.
+A new minor service version release must not introduce breaking changes. The YaaS functional testing strategy focuses on help identifying any changes impacting the consumer interfaces so that accidental errors can be detected before impacting real consumers and stop their services from being available or functional correct.
 
 In order to guarantee that new minor versions do not introduce any breaking changes into a service, previous test suites need to be re-run against the most recent service version. 
 
@@ -60,11 +60,11 @@ Each user story has a well defined list of acceptance criterias:
 	* if there is a service provider with the given id, 409 is returned
 * ...
 
-Each single item of the list needs to be tested automatically. In contradiction to the REST API testing it is forbidden to mock any components in the actual microservice. It is only allowed to mock remote producer services. In case a service requires infrastructure components these need to be run embedded in the test. Again the rule applies that acceptance tests need to be runnable independent from any other services or infrastructure (Exception: Still for Open Beta it is allowed but not encouraged to run tests against the real services).
+Each single item of the list needs to be tested automatically. In contradiction to the REST API testing it is forbidden to mock any components in the actual microservice. It is only allowed to mock remote producer services. In case a service requires infrastructure components these need to be run embedded in the test. Again the rule applies that acceptance tests need to be runnable independent from any other services or infrastructure (exception: during Open Beta it is allowed but not encouraged to run tests against the real services).
 
 ![acceptancetesting](./images/acceptancetesting.tiff "Acceptance testing of a microservice")
 
-As with REST API tests the acceptance tests require an embedded test server to be running. For the actual acceptance test the test simulates a real user interacting with the server. Subject to test is the service's functional correctness and behavior in case of user input error. If not tested during REST API testing the compliance with the RAML definition needs also be tested. For the latter use-case teams can re-use the [raml-validation-proxy](https://github.com/hybris/raml-validation-proxy). 
+As with REST API tests the acceptance tests require an embedded test server to be running. For the actual acceptance test the test simulates a real user interacting with the server. Subject to test is the service's functional correctness and behavior in case of user input error. If not tested during REST API testing the compliance with the RAML definition also needs be tested. For the latter use-case teams can re-use the [raml-validation-proxy](https://github.com/hybris/raml-validation-proxy). 
 
 As with the REST API testing it needs to be guaranteed that a new minor version of a service does not introduce any breaking changes into its interface. Therefore it is mandatory that former minor versions' acceptance tests are re-run against the most recent version. This is inline with with the business continuity for consumers goal.
 
@@ -88,6 +88,7 @@ The given visualization shows the test subject highlighted in red. Test doubles 
 
 ##### Change
 This is fundamental change in the way tests are executed now:
+
 * It requires that all team follow a layered implementation style
 * In addition it requires that a test server can be spawned from source code
 * Finally tests need to be structured in a way that test server behavior setup and test expectations are separated
@@ -154,12 +155,8 @@ return builder.uponReceiving("a request for price")
 
 An example is available at [link](https://github.com/MichaelStephan/functionaltestingstrategy/blob/master/sample/productdetailsservice/src/test/java/dao/impl/GivenProductIdAsArgumentToGetPricesThenReturnProductPriceTest.java). When the unit tests are executed pact jvm will run all tests and spawn mock services. During test execution pact files will be generated. Those files can be re-used as will be described in the contract testing section. 
 
-```
-Change: most teams don't test do tests on technical integration logic (e.g. test for timeouts). In additional teams will be asked to use pact-jvm for mocking or equivalent technology.
-```
-
-
-
+##### Change
+Most teams don't test do tests on technical integration logic (e.g. test for timeouts). In additional teams will be asked to use pact-jvm for mocking or equivalent technology.
 
 
 ## Smoke testing
@@ -180,10 +177,12 @@ A team needs to take responsiblity of the pact repository and the CI pipelines n
 For the General Availability we would like to rollout the entire process.
 
 Minimal requirement for Open Beta:
+
 * Automated Acceptance Test for each story (if applicable)
 * Initially integrated tests are still allow (i.e. Product Details service can communicate with the real Product service and not a mock)
 
-How to get proceed for getting the full advantage of the strategy:
+How to proceed for getting the full advantage of the strategy:
+
 * Acceptance Testing
 * Unit Testing
 	* REST-API Testing
@@ -197,6 +196,7 @@ How to get proceed for getting the full advantage of the strategy:
 * Only if test with the pact file against production relaese the service on stage/production
 
 Before GA we want to introduce:
+
 * Automatic check of pact file towards stage/production
 * Automatic Deployment pipeline integration of contract testing
 
