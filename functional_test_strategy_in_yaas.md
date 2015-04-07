@@ -205,9 +205,9 @@ The authors of this guide are aware of the fact that all teams implemented their
 
 | Tasks        | Responsible           | Due to  |
 | ------------- |:-------------:|:-----:|
-| Communicate test strategy to teams      | Angela | 02.04.2015 |
+| Communicate test strategy to teams      | Angela | 07.04.2015 |
+| Create acceptance tests and embed into CI process      | all teams      |   Open Beta |
 | Periodically execute smoke testing (aka existing integration tests) in stage and production)      | all teams | TBD |
-| Create acceptance tests and embed into CI process      | all teams      |   TBD |
 | Create REST API tests and embed into CI process | all teams      |    TBD |
 | Create data access logic tests - data sources and embed into CI process | all teams      |    TBD |
 | Create data access logic tests - integration logic and embed into CI process | all teams      |    TBD |
